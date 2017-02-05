@@ -15,6 +15,8 @@ public class UserModel implements Serializable {
     private String photo_profile;
     private double latitude;
     private double longitude;
+    private String chatId;
+    private Boolean active;
 
     public UserModel() {
     }
@@ -73,5 +75,21 @@ public class UserModel implements Serializable {
         this.longitude = longitude;
     }
 
+
+    public String getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
 }

@@ -97,6 +97,8 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         userImg = (ImageView) findViewById(R.id.userImage);
         textViewUsername = (TextView) findViewById(R.id.textViewUsername);
 
@@ -119,6 +121,7 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
                 Intent intent = new Intent(BeerActivity.this, BeerBuddyFoundActivity.class);
                 UserModel randomUser = getRandomUser();
                 intent.putExtra("RandomUser", randomUser);
+                intent.putExtra("CurrentUser", userModel);
                 startActivity(intent);
                 finish();
             }
@@ -138,8 +141,16 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
                         Map<String, Object> message = (Map<String, Object>)child.getValue();
 
                         String id = (String) message.get("id");
-                        double latitude = Double.longBitsToDouble((Long)message.get("latitude"));
-                        double longitude = Double.longBitsToDouble((Long)message.get("longitude"));
+                        double latitude;
+                        double longitude;
+                        try{
+                            latitude = Double.longBitsToDouble((Long)message.get("latitude"));
+                            longitude = Double.longBitsToDouble((Long)message.get("longitude"));
+                        } catch (Exception e){
+                            latitude = (double)message.get("latitude");
+                            longitude = (double)message.get("longitude");
+                        }
+
                         String name = (String) message.get("name");
                         String photo_profile = (String) message.get("photo_profile");
 
@@ -151,13 +162,11 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
                     // dodaj do bazy jak nie ma go w id
                     for(String s : usersListIds){
                         if(!s.contains(userModel.getId())){
-                            mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
                             mFirebaseDatabaseReference.child(USER_DB).child(userModel.getId()).setValue(userModel);
                         }
                     }
 
                     if(usersListIds.size() == 0){
-                        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
                         mFirebaseDatabaseReference.child(USER_DB).child(userModel.getId()).setValue(userModel);
                     }
                 }
@@ -261,11 +270,18 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
     public UserModel getRandomUser() {
 //        Random randomGenerator = new Random();
 //        int index = randomGenerator.nextInt(usersListIds.size());
-        UserModel randomUser = usersList.get(0);
-        while( randomUser.getId() == userModel.getId()) {
-            Collections.shuffle(usersListIds);
-            randomUser = usersList.get(0);
-        }
+        UserModel randomUser;
+        List<UserModel> listWithoutCurrentId = new ArrayList<UserModel>();
+       for (UserModel user : usersList){
+           if(user.getId().equals(userModel.getId())){
+           } else {
+
+               listWithoutCurrentId.add(user);
+           }
+       }
+
+            Collections.shuffle(listWithoutCurrentId);
+            randomUser = listWithoutCurrentId.get(0);
 
         return randomUser;
     }

@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final int PLACE_PICKER_REQUEST = 3;
 
     static final String TAG = MainActivity.class.getSimpleName();
-    static final String CHAT_REFERENCE = "chatmodel-1";
+    static String CHAT_REFERENCE;
 
     //Firebase and GoogleApiClient
     private FirebaseAuth mFirebaseAuth;
@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        CHAT_REFERENCE = intent.getStringExtra("chatId");
 
         if (!Util.verificaConexao(this)){
             Util.initToast(this,"Você não tem conexão com internet");
