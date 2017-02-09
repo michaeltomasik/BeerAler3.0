@@ -41,7 +41,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:36663205451:android:cb56a7d056ba4167",
         "android_client_info": {
-          "package_name": "alessandro.firebaseandroid"
+          "package_name": "michal.firebaseandroid"
         }
       },
       "oauth_client": [
@@ -49,7 +49,7 @@
           "client_id": "36663205451-j3a9fiji19quku91ru2liut2tebrvjkh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "alessandro.firebaseandroid",
+            "package_name": "michal.firebaseandroid",
             "certificate_hash": "F457B67CCCFD4B745910D61F212001CBA8648B8F"
           }
         },

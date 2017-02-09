@@ -1,4 +1,4 @@
-package alessandro.firebaseandroid.view;
+package michal.beeralert.view;
 
 /*
  * TouchImageView.java

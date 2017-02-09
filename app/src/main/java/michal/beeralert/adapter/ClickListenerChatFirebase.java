@@ -1,4 +1,4 @@
-package alessandro.firebaseandroid.adapter;
+package michal.beeralert.adapter;
 
 import android.view.View;
 

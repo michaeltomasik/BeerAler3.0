@@ -1,4 +1,4 @@
-package alessandro.firebaseandroid.view;
+package michal.beeralert.view;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
@@ -13,14 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.target.Target;
 
-import alessandro.firebaseandroid.R;
-import alessandro.firebaseandroid.adapter.CircleTransform;
+import michal.beeralert.R;
+import michal.beeralert.adapter.CircleTransform;
 
 public class FullScreenImageActivity extends AppCompatActivity {
 

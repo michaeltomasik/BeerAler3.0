@@ -1,13 +1,8 @@
-package alessandro.firebaseandroid.util;
+package michal.beeralert.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.widget.Toast;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Alessandro Barreto on 23/06/2016.

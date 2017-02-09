@@ -1,14 +1,10 @@
-package alessandro.firebaseandroid.view;
+package michal.beeralert.view;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +16,8 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,30 +26,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import alessandro.firebaseandroid.R;
-import alessandro.firebaseandroid.adapter.ClickListenerChatFirebase;
-import alessandro.firebaseandroid.gps.TrackGPS;
-import alessandro.firebaseandroid.model.ChatModel;
-import alessandro.firebaseandroid.model.MapModel;
-import alessandro.firebaseandroid.model.UserModel;
-import alessandro.firebaseandroid.util.Util;
-
-import static alessandro.firebaseandroid.R.id.imageView;
-import static java.lang.System.in;
+import michal.beeralert.R;
+import michal.beeralert.gps.TrackGPS;
+import michal.beeralert.model.UserModel;
+import michal.beeralert.util.Util;
 
 /**
  * Created by michal on 1/24/2017.

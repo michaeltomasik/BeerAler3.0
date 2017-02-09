@@ -1,4 +1,4 @@
-package alessandro.firebaseandroid.model;
+package michal.beeralert.model;
 
 /**
  * Created by Alessandro Barreto on 22/06/2016.

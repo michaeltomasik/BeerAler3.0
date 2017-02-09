@@ -1,6 +1,5 @@
-package alessandro.firebaseandroid;
+package michal.beeralert;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
-import android.support.v4.app.RemoteInput;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
@@ -38,33 +36,27 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.Date;
 
-import alessandro.firebaseandroid.adapter.ChatFirebaseAdapter;
+import michal.beeralert.adapter.ChatFirebaseAdapter;
 
-import alessandro.firebaseandroid.adapter.ClickListenerChatFirebase;
-import alessandro.firebaseandroid.model.ChatModel;
-import alessandro.firebaseandroid.model.FileModel;
-import alessandro.firebaseandroid.model.MapModel;
-import alessandro.firebaseandroid.model.UserModel;
-import alessandro.firebaseandroid.util.Util;
-import alessandro.firebaseandroid.view.FullScreenImageActivity;
-import alessandro.firebaseandroid.view.LoginActivity;
+import michal.beeralert.adapter.ClickListenerChatFirebase;
+import michal.beeralert.model.ChatModel;
+import michal.beeralert.model.FileModel;
+import michal.beeralert.model.MapModel;
+import michal.beeralert.model.UserModel;
+import michal.beeralert.util.Util;
+import michal.beeralert.view.FullScreenImageActivity;
+import michal.beeralert.view.LoginActivity;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 

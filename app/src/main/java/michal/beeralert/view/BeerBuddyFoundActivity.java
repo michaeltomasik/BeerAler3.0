@@ -1,4 +1,4 @@
-package alessandro.firebaseandroid.view;
+package michal.beeralert.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,9 +18,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import alessandro.firebaseandroid.MainActivity;
-import alessandro.firebaseandroid.R;
-import alessandro.firebaseandroid.model.UserModel;
+import michal.beeralert.MainActivity;
+import michal.beeralert.R;
+import michal.beeralert.model.UserModel;
 
 
 /**

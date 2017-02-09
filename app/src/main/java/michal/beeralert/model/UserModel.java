@@ -1,9 +1,6 @@
-package alessandro.firebaseandroid.model;
-
-import com.google.firebase.database.Exclude;
+package michal.beeralert.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by Alessandro Barreto on 22/06/2016.

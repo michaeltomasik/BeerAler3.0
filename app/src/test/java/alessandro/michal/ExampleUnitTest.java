@@ -1,4 +1,4 @@
-package alessandro.firebaseandroid;
+package michal.beeralert;
 
 import org.junit.Test;
 
