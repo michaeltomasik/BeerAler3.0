@@ -15,8 +15,8 @@
         android:textSize="30sp" />
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="415sp"
+        android:layout_height="415sp"
         app:srcCompat="@drawable/broccoli1"
         android:id="@+id/foundBuddy" />
 </LinearLayout>

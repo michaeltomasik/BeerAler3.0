@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase Android</string>
+    <string name="app_name">Beer Alert</string>
     <string name="sendPhoto">Photo Camera</string>
     <string name="sign_out">Sign Out</string>
     <string name="select_picture_title">Get Photo From</string>

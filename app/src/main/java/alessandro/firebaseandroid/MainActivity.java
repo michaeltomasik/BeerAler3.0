@@ -1,5 +1,8 @@
 package alessandro.firebaseandroid;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 
 import android.net.Uri;
@@ -8,8 +11,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
+import android.support.v4.app.RemoteInput;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
-        CHAT_REFERENCE = intent.getStringExtra("chatId");
+        CHAT_REFERENCE = "OMG-TEST";//intent.getStringExtra("chatId");
 
         if (!Util.verificaConexao(this)){
             Util.initToast(this,"Você não tem conexão com internet");
@@ -195,6 +200,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 sendMessageFirebase();
                 break;
         }
+    }
+
+    public void notifyThis() {
+        NotificationCompat.Builder b = new NotificationCompat.Builder(this.getApplicationContext());
+        b.setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.beer)
+                .setTicker("Hearty365")
+                .setContentTitle("Nowa Wiadomosc")
+                .setContentInfo("INFO");
+
+        NotificationManager nm = (NotificationManager) this.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(1, b.build());
     }
 
     @Override
@@ -329,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 lastVisiblePosition == (positionStart - 1))) {
                     rvListMessage.scrollToPosition(positionStart);
                 }
+                notifyThis();
             }
         });
         rvListMessage.setLayoutManager(mLinearLayoutManager);

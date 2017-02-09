@@ -22,8 +22,6 @@ import alessandro.firebaseandroid.MainActivity;
 import alessandro.firebaseandroid.R;
 import alessandro.firebaseandroid.model.UserModel;
 
-import static alessandro.firebaseandroid.R.id.textViewUsername;
-import static alessandro.firebaseandroid.R.id.userImg;
 
 /**
  * Created by michal on 1/24/2017.

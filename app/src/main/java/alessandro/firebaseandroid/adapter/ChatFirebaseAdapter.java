@@ -1,5 +1,8 @@
 package alessandro.firebaseandroid.adapter;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -15,6 +18,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
+import java.util.List;
+
 import alessandro.firebaseandroid.R;
 import alessandro.firebaseandroid.model.ChatModel;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
@@ -28,6 +33,7 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatF
     private static final int LEFT_MSG = 1;
     private static final int RIGHT_MSG_IMG = 2;
     private static final int LEFT_MSG_IMG = 3;
+    private String message;
 
     private ClickListenerChatFirebase mClickListenerChatFirebase;
 
