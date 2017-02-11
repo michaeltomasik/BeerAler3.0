@@ -11,14 +11,13 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_key_google_places" />
 
-        <activity android:name="michal.beeralert.MainActivity">
+        <activity android:name="michal.beeralert.view.MessagerActivity">
         </activity>
         <activity android:name="michal.beeralert.view.LoginActivity" >
 
@@ -32,10 +31,7 @@
         </activity>
 
         <activity android:name="michal.beeralert.view.BeerBuddyFoundActivity" />
-        <activity
-            android:theme="@style/AppThemeFullScreenImage"
-            android:name="michal.beeralert.view.FullScreenImageActivity">
-        </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"

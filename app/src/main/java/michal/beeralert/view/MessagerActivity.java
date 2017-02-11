@@ -1,4 +1,4 @@
-package michal.beeralert;
+package michal.beeralert.view;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -22,37 +22,32 @@ import android.widget.ImageView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 
 import java.io.File;
 import java.util.Calendar;
 
+import michal.beeralert.R;
 import michal.beeralert.adapter.ChatFirebaseAdapter;
 
 import michal.beeralert.model.ChatModel;
-import michal.beeralert.model.MapModel;
 import michal.beeralert.model.UserModel;
 import michal.beeralert.util.Util;
-import michal.beeralert.view.LoginActivity;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class MessagerActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
     private static final int PLACE_PICKER_REQUEST = 3;
 
-    static final String TAG = MainActivity.class.getSimpleName();
+    static final String TAG = MessagerActivity.class.getSimpleName();
     static String CHAT_REFERENCE;
 
     //Firebase and GoogleApiClient
@@ -84,12 +79,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Intent intent = getIntent();
         CHAT_REFERENCE = "OMG-TEST";//intent.getStringExtra("chatId");
 
-        if (!Util.verificaConexao(this)){
-            Util.initToast(this,"Você não tem conexão com internet");
+        if (!Util.verifyConnection(this)){
+            Util.initToast(this,"No internet");
             finish();
         }else{
             bindViews();
-            verificaUsuarioLogado();
+            verifyUser();
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .enableAutoManage(this, this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API)
@@ -97,27 +92,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        StorageReference storageRef = storage.getReferenceFromUrl(Util.URL_STORAGE_REFERENCE).child(Util.FOLDER_STORAGE_IMG);
-
-        if (requestCode == PLACE_PICKER_REQUEST){
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(this, data);
-                if (place!=null){
-                    LatLng latLng = place.getLatLng();
-                    MapModel mapModel = new MapModel(latLng.latitude+"",latLng.longitude+"");
-                    ChatModel chatModel = new ChatModel(userModel,Calendar.getInstance().getTime().getTime()+"",mapModel);
-                    mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
-                }else{
-
-                    //PLACE IS NULL
-                }
-            }
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.beer)
-                .setTicker("Hearty365")
+                .setTicker("Beer")
                 .setContentTitle("Nowa Wiadomosc")
                 .setContentInfo("INFO");
 
@@ -167,19 +141,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         nm.notify(1, b.build());
     }
 
-    /**
-     * Enviar msg de texto simples para chat
-     */
     private void sendMessageFirebase(){
-        ChatModel model = new ChatModel(userModel,edMessage.getText().toString(), Calendar.getInstance().getTime().getTime()+"",null);
+        ChatModel model = new ChatModel(userModel,edMessage.getText().toString(), Calendar.getInstance().getTime().getTime()+"");
         mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(model);
         edMessage.setText(null);
     }
 
-    /**
-     * Ler collections chatmodel Firebase
-     */
-    private void lerMessagensFirebase(){
+    private void loadMessagesFromFirebase(){
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         final ChatFirebaseAdapter firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE),userModel.getName());
         firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -200,10 +168,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         rvListMessage.setAdapter(firebaseAdapter);
     }
 
-    /**
-     * Verificar se usuario está logado
-     */
-    private void verificaUsuarioLogado(){
+    private void verifyUser(){
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser == null){
@@ -211,13 +176,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             finish();
         }else{
             userModel = new UserModel(mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getUid() );
-            lerMessagensFirebase();
+            loadMessagesFromFirebase();
         }
     }
 
-    /**
-     * Vincular views com Java API
-     */
     private void bindViews(){
         contentRoot = findViewById(R.id.contentRoot);
         edMessage = (EmojiconEditText)findViewById(R.id.editTextMessage);
@@ -231,9 +193,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mLinearLayoutManager.setStackFromEnd(true);
     }
 
-    /**
-     * Sign Out no login
-     */
     private void signOut(){
         mFirebaseAuth.signOut();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);

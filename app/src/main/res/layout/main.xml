@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="@color/mainColor">
 
     <TextView
         android:text="TextView"
@@ -19,26 +20,6 @@
         android:textSize="24sp"
         android:layout_toEndOf="@+id/userImage" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/beer"
-        android:id="@+id/imageButton"
-        android:layout_below="@+id/userImage"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:text="Find Beer Buddy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/imageButton"
-        android:layout_marginTop="59dp"
-        android:layout_alignParentStart="true"
-        android:textSize="40sp"
-        android:textAlignment="center"
-        android:fontFamily="sans-serif-smallcaps" />
-
     <ImageView
         android:layout_width="147dp"
         android:layout_height="134dp"
@@ -46,5 +27,28 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
+    <at.markushi.ui.CircleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/beer"
+        android:id="@+id/imageButton"
+        app:cb_color="#99CC00"
+        app:cb_pressedRingWidth="80dip"
+        android:layout_marginLeft="52dp"
+        android:layout_below="@+id/textViewUsername"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="53dp" />
+
+    <TextView
+        android:text="Find Beer Buddy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:textSize="40sp"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif-smallcaps"
+        android:layout_below="@+id/imageButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="18dp" />
 
 </RelativeLayout>

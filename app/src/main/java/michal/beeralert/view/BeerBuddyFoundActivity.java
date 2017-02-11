@@ -18,7 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import michal.beeralert.MainActivity;
 import michal.beeralert.R;
 import michal.beeralert.model.UserModel;
 
@@ -69,7 +68,7 @@ public class BeerBuddyFoundActivity extends Activity{
             public void onClick(View v) {
                 // TODO Auto-generated method stub
 
-                Intent intent = new Intent(BeerBuddyFoundActivity.this, MainActivity.class);
+                Intent intent = new Intent(BeerBuddyFoundActivity.this, MessagerActivity.class);
                 intent.putExtra("chatId", chatId);
                 startActivity(intent);
                 finish();

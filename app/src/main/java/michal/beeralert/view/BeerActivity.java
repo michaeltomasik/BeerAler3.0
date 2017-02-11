@@ -18,6 +18,8 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,14 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import at.markushi.ui.CircleButton;
 import michal.beeralert.R;
-import michal.beeralert.gps.TrackGPS;
 import michal.beeralert.model.UserModel;
 import michal.beeralert.util.Util;
-
-/**
- * Created by michal on 1/24/2017.
- */
 
 
 public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.OnConnectionFailedListener {
@@ -51,12 +49,10 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
     private FirebaseUser mFirebaseUser;
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mFirebaseDatabaseReference;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-
 
     private ImageView userImg;
     private TextView textViewUsername;
-    private ImageButton imageButton;
+    private CircleButton imageButton;
     //CLass Model
     private UserModel userModel;
     /**
@@ -66,10 +62,12 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
     private String USER_DB = "users";
     private GoogleApiClient client;
 
-    private TrackGPS gps;
-
     private List<String> usersListIds = new ArrayList<>();
     private List<UserModel> usersList = new ArrayList<>();
+
+    int PLACE_PICKER_REQUEST = 1;
+    Double latitude = 0.0;
+    Double longitude = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +79,7 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
         textViewUsername = (TextView) findViewById(R.id.textViewUsername);
 
 
-        verificaUsuarioLogado();
+        verifyUser();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
@@ -90,14 +88,20 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        imageButton =(ImageButton)findViewById(R.id.imageButton);
+        imageButton =(CircleButton)findViewById(R.id.imageButton);
         imageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(BeerActivity.this, BeerBuddyFoundActivity.class);
-                UserModel randomUser = getRandomUser();
+                UserModel randomUser = new UserModel();
+                try {
+                    randomUser = getRandomUser();
+                } catch (Exception e) {
+                    startActivity(new Intent(BeerActivity.this, BeerBuddyNotFoundActivity.class));
+                    finish();
+                }
                 intent.putExtra("RandomUser", randomUser);
                 intent.putExtra("CurrentUser", userModel);
                 startActivity(intent);
@@ -105,17 +109,15 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
             }
         });
 
-        gps = new TrackGPS(BeerActivity.this);
-        if (gps!=null && mFirebaseUser != null){
-            userModel.setLatitude(gps.getLatitude());
-            userModel.setLongitude(gps.getLongitude());
-
+        if (mFirebaseUser != null){
+            userModel.setLatitude(latitude);
+            userModel.setLongitude(longitude);
 
             ValueEventListener listener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot child : dataSnapshot.getChildren()){
-                        //child is each element in the finished list
+                        // child is each element in the finished list
                         Map<String, Object> message = (Map<String, Object>)child.getValue();
 
                         String id = (String) message.get("id");
@@ -137,7 +139,7 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
                         usersList.add(user);
                         usersListIds.add(id);
                     }
-                    // dodaj do bazy jak nie ma go w id
+                    // add to db it there is no user
                     for(String s : usersListIds){
                         if(!s.contains(userModel.getId())){
                             mFirebaseDatabaseReference.child(USER_DB).child(userModel.getId()).setValue(userModel);
@@ -159,7 +161,19 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
 
 
         }else{
-            //PLACE IS NULL
+            Util.initToast(this,"NO USER");
+        }
+    }
+
+    protected void onActivityResult( int requestCode , int resultCode , Intent data ){
+        if(requestCode == PLACE_PICKER_REQUEST)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                Place place =   PlacePicker.getPlace(data,this);
+                latitude = place.getLatLng().latitude;
+                longitude = place.getLatLng().longitude;
+            }
         }
     }
 
@@ -181,9 +195,6 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Sign Out no login
-     */
     private void signOut(){
         mFirebaseAuth.signOut();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
@@ -191,26 +202,7 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
         finish();
     }
 
-    private void authUser() {
-        // dodaj do bazy jak nie ma go w id
-        for(String s : usersListIds){
-            if(s.contains(userModel.getId())){
-                return;
-            };
-            mFirebaseDatabaseReference.child(USER_DB).setValue(userModel);
-        }
-    }
-
-    public boolean containsId(List<UserModel> list, String name, String url) {
-        for (UserModel object : list) {
-            if (object.getName() == name ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void verificaUsuarioLogado() {
+    private void verifyUser() {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
@@ -219,12 +211,8 @@ public class BeerActivity extends AppCompatActivity  implements GoogleApiClient.
             finish();
         } else {
             userModel = new UserModel(mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getUid());
-            //userImg = userModel.getPhoto_profile();
             Picasso.with(this).load(userModel.getPhoto_profile()).into(userImg);
             textViewUsername.setText(userModel.getName());
-//            URL url = new URL("http://image10.bizrate-images.com/resize?sq=60&uid=2216744464");
-//            Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//            userImg.setImageBitmap(bmp);
         }
     }
 

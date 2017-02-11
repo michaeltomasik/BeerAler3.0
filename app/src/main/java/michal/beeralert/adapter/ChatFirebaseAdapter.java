@@ -16,9 +16,6 @@ import michal.beeralert.R;
 import michal.beeralert.model.ChatModel;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 
-/**
- * Created by Alessandro Barreto on 23/06/2016.
- */
 public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatFirebaseAdapter.MyChatViewHolder> {
 
     private static final int RIGHT_MSG = 0;
@@ -57,12 +54,6 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatF
         ChatModel model = getItem(position);
         if (model.getMapModel() != null){
             if (model.getUserModel().getName().equals(nameUser)){
-                return RIGHT_MSG_IMG;
-            }else{
-                return LEFT_MSG_IMG;
-            }
-        }else if (model.getFile() != null){
-            if (model.getFile().getType().equals("img") && model.getUserModel().getName().equals(nameUser)){
                 return RIGHT_MSG_IMG;
             }else{
                 return LEFT_MSG_IMG;

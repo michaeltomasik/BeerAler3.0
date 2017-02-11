@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (!Util.verificaConexao(this)){
+        if (!Util.verifyConnection(this)){
             Util.initToast(this,"Internet !!");
             finish();
         }

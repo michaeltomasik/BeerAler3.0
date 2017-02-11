@@ -52,5 +52,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile 'com.google.android.gms:play-services-appindexing:9.2.0'
+
+    compile 'com.github.markushi:circlebutton:1.1'
 }
 apply plugin: 'com.google.gms.google-services'
