@@ -4,10 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 
-import android.net.Uri;
-
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,41 +21,32 @@ import android.widget.ImageView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Date;
 
 import michal.beeralert.adapter.ChatFirebaseAdapter;
 
-import michal.beeralert.adapter.ClickListenerChatFirebase;
 import michal.beeralert.model.ChatModel;
-import michal.beeralert.model.FileModel;
 import michal.beeralert.model.MapModel;
 import michal.beeralert.model.UserModel;
 import michal.beeralert.util.Util;
-import michal.beeralert.view.FullScreenImageActivity;
 import michal.beeralert.view.LoginActivity;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, ClickListenerChatFirebase {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
@@ -116,25 +102,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         StorageReference storageRef = storage.getReferenceFromUrl(Util.URL_STORAGE_REFERENCE).child(Util.FOLDER_STORAGE_IMG);
 
-        if (requestCode == IMAGE_GALLERY_REQUEST){
-            if (resultCode == RESULT_OK){
-                Uri selectedImageUri = data.getData();
-                if (selectedImageUri != null){
-                    sendFileFirebase(storageRef,selectedImageUri);
-                }else{
-                    //URI IS NULL
-                }
-            }
-        }else if (requestCode == IMAGE_CAMERA_REQUEST){
-            if (resultCode == RESULT_OK){
-                if (filePathImageCamera != null && filePathImageCamera.exists()){
-                    StorageReference imageCameraRef = storageRef.child(filePathImageCamera.getName()+"_camera");
-                    sendFileFirebase(imageCameraRef,filePathImageCamera);
-                }else{
-                    //IS NULL
-                }
-            }
-        }else if (requestCode == PLACE_PICKER_REQUEST){
+        if (requestCode == PLACE_PICKER_REQUEST){
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(this, data);
                 if (place!=null){
@@ -161,15 +129,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
-            case R.id.sendPhoto:
-                photoCameraIntent();
-                break;
-            case R.id.sendPhotoGallery:
-                photoGalleryIntent();
-                break;
-            case R.id.sendLocation:
-                locationPlacesIntent();
-                break;
             case R.id.sign_out:
                 signOut();
                 break;
@@ -208,112 +167,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         nm.notify(1, b.build());
     }
 
-    @Override
-    public void clickImageChat(View view, int position,String nameUser,String urlPhotoUser,String urlPhotoClick) {
-        Intent intent = new Intent(this,FullScreenImageActivity.class);
-        intent.putExtra("nameUser",nameUser);
-        intent.putExtra("urlPhotoUser",urlPhotoUser);
-        intent.putExtra("urlPhotoClick",urlPhotoClick);
-        startActivity(intent);
-    }
-
-    @Override
-    public void clickImageMapChat(View view, int position,String latitude,String longitude) {
-        String uri = String.format("geo:%s,%s?z=17&q=%s,%s", latitude,longitude,latitude,longitude);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(intent);
-    }
-
-
-    /**
-     * Envia o arvquivo para o firebase
-     */
-    private void sendFileFirebase(StorageReference storageReference, final Uri file){
-        if (storageReference != null){
-            final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
-            StorageReference imageGalleryRef = storageReference.child(name+"_gallery");
-                UploadTask uploadTask = imageGalleryRef.putFile(file);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG,"onFailure sendFileFirebase "+e.getMessage());
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.i(TAG,"onSuccess sendFileFirebase");
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        FileModel fileModel = new FileModel("img",downloadUrl.toString(),name,"");
-                        ChatModel chatModel = new ChatModel(userModel,"",Calendar.getInstance().getTime().getTime()+"",fileModel);
-                        mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
-                    }
-                });
-        }else{
-            //IS NULL
-        }
-
-    }
-
-    /**
-     * Envia o arvquivo para o firebase
-     */
-    private void sendFileFirebase(StorageReference storageReference, final File file){
-        if (storageReference != null){
-            UploadTask uploadTask = storageReference.putFile(Uri.fromFile(file));
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG,"onFailure sendFileFirebase "+e.getMessage());
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.i(TAG,"onSuccess sendFileFirebase");
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    FileModel fileModel = new FileModel("img",downloadUrl.toString(),file.getName(),file.length()+"");
-                    ChatModel chatModel = new ChatModel(userModel,"",Calendar.getInstance().getTime().getTime()+"",fileModel);
-                    mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(chatModel);
-                }
-            });
-        }else{
-            //IS NULL
-        }
-
-    }
-
-    /**
-     * Obter local do usuario
-     */
-    private void locationPlacesIntent(){
-        try {
-            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Enviar foto tirada pela camera
-     */
-    private void photoCameraIntent(){
-        String nomeFoto = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
-        filePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto+"camera.jpg");
-        Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        it.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(filePathImageCamera));
-        startActivityForResult(it, IMAGE_CAMERA_REQUEST);
-    }
-
-    /**
-     * Enviar foto pela galeria
-     */
-    private void photoGalleryIntent(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture_title)), IMAGE_GALLERY_REQUEST);
-    }
-
     /**
      * Enviar msg de texto simples para chat
      */
@@ -328,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
      */
     private void lerMessagensFirebase(){
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        final ChatFirebaseAdapter firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE),userModel.getName(),this);
+        final ChatFirebaseAdapter firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE),userModel.getName());
         firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {

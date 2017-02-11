@@ -27,16 +27,11 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatF
     private static final int LEFT_MSG_IMG = 3;
     private String message;
 
-    private ClickListenerChatFirebase mClickListenerChatFirebase;
-
     private String nameUser;
 
-
-
-    public ChatFirebaseAdapter(DatabaseReference ref, String nameUser,ClickListenerChatFirebase mClickListenerChatFirebase) {
+    public ChatFirebaseAdapter(DatabaseReference ref, String nameUser) {
         super(ChatModel.class, R.layout.item_message_left, ChatFirebaseAdapter.MyChatViewHolder.class, ref);
         this.nameUser = nameUser;
-        this.mClickListenerChatFirebase = mClickListenerChatFirebase;
     }
 
     @Override
@@ -83,18 +78,9 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatF
     protected void populateViewHolder(MyChatViewHolder viewHolder, ChatModel model, int position) {
         viewHolder.setIvUser(model.getUserModel().getPhoto_profile());
         viewHolder.setTxtMessage(model.getMessage());
-        viewHolder.setTvTimestamp(model.getTimeStamp());
-        viewHolder.tvIsLocation(View.GONE);
-        if (model.getFile() != null){
-            viewHolder.tvIsLocation(View.GONE);
-            viewHolder.setIvChatPhoto(model.getFile().getUrl_file());
-        }else if(model.getMapModel() != null){
-            viewHolder.setIvChatPhoto(michal.beeralert.util.Util.local(model.getMapModel().getLatitude(),model.getMapModel().getLongitude()));
-            viewHolder.tvIsLocation(View.VISIBLE);
-        }
     }
 
-    public class MyChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MyChatViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTimestamp,tvLocation;
         EmojiconTextView txtMessage;
@@ -109,17 +95,6 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatF
             ivUser = (ImageView)itemView.findViewById(R.id.ivUserChat);
         }
 
-        @Override
-        public void onClick(View view) {
-            int position = getAdapterPosition();
-            ChatModel model = getItem(position);
-            if (model.getMapModel() != null){
-                mClickListenerChatFirebase.clickImageMapChat(view,position,model.getMapModel().getLatitude(),model.getMapModel().getLongitude());
-            }else{
-                mClickListenerChatFirebase.clickImageChat(view,position,model.getUserModel().getName(),model.getUserModel().getPhoto_profile(),model.getFile().getUrl_file());
-            }
-        }
-
         public void setTxtMessage(String message){
             if (txtMessage == null)return;
             txtMessage.setText(message);
@@ -129,26 +104,6 @@ public class ChatFirebaseAdapter extends FirebaseRecyclerAdapter<ChatModel,ChatF
             if (ivUser == null)return;
             Glide.with(ivUser.getContext()).load(urlPhotoUser).centerCrop().transform(new CircleTransform(ivUser.getContext())).override(40,40).into(ivUser);
         }
-
-        public void setTvTimestamp(String timestamp){
-            if (tvTimestamp == null)return;
-            tvTimestamp.setText(converteTimestamp(timestamp));
-        }
-
-        public void setIvChatPhoto(String url){
-            if (ivChatPhoto == null)return;
-            Glide.with(ivChatPhoto.getContext()).load(url)
-                    .override(100, 100)
-                    .fitCenter()
-                    .into(ivChatPhoto);
-            ivChatPhoto.setOnClickListener(this);
-        }
-
-        public void tvIsLocation(int visible){
-            if (tvLocation == null)return;
-            tvLocation.setVisibility(visible);
-        }
-
     }
 
     private CharSequence converteTimestamp(String mileSegundos){
